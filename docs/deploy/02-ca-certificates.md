@@ -18,21 +18,20 @@ Now that you have the [prerequisites](./01-prerequisites.md) met, follow these s
 
    Create the certificate that will be presented to web clients by Azure Application Gateway for your domain.
 
-   ```bash
-   openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out appgw.crt -keyout appgw.key -subj "/CN=bicycle.${DOMAIN_NAME_AKS_BASELINE}/O=Contoso Bicycle" -addext "subjectAltName = DNS:bicycle.${DOMAIN_NAME_AKS_BASELINE}" -addext "keyUsage = digitalSignature" -addext "extendedKeyUsage = serverAuth"
-   openssl pkcs12 -export -out appgw.pfx -in appgw.crt -inkey appgw.key -passout pass:
-   ```
-
    ### Kelly updates
+
+   ~~openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out appgw.crt -keyout appgw.key -subj "/CN=bicycle.${DOMAIN_NAME_AKS_BASELINE}/O=Contoso Bicycle" -addext "subjectAltName = DNS:bicycle.${DOMAIN_NAME_AKS_BASELINE}" -addext "keyUsage = digitalSignature" -addext "extendedKeyUsage = serverAuth"~~
 
    ```bash
    MSYS2_ARG_CONV_EXCL="/CN" openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out appgw.crt -keyout appgw.key -subj "/CN=bicycle.${DOMAIN_NAME_AKS_BASELINE}/O=Contoso Bicycle" -addext "subjectAltName = DNS:bicycle.${DOMAIN_NAME_AKS_BASELINE}" -addext "keyUsage=digitalSignature" -addext "extendedKeyUsage = serverAuth"
+
+   openssl pkcs12 -export -out appgw.pfx -in appgw.crt -inkey appgw.key -passout pass:
    ```
 
 
 1. Base64 encode the client-facing certificate.
 
-   :bulb: No matter if you used a certificate from your organization or one generated from above, you'll need the certificate (as `.pfx`) to be Base64 encoded for proper storage in Key Vault later.
+   💡 No matter if you used a certificate from your organization or one generated from above, you'll need the certificate (as `.pfx`) to be Base64 encoded for proper storage in Key Vault later.
 
    ```bash
    export APP_GATEWAY_LISTENER_CERTIFICATE_AKS_BASELINE=$(cat appgw.pfx | base64 | tr -d '\n')
@@ -41,7 +40,7 @@ Now that you have the [prerequisites](./01-prerequisites.md) met, follow these s
 
 1. Generate the wildcard certificate for the AKS gateway proxy.
 
-   > :book: Contoso Bicycle procured a standard CA certificate to be used with the AKS gateway proxy. This one is not EV, because it won't be user-facing. The workload team decides to use a wildcard certificate of `*.aks-ingress.contoso.com` for the gateway.
+   📙 Contoso Bicycle procured a standard CA certificate to be used with the AKS gateway proxy. This one is not EV, because it won't be user-facing. The workload team decides to use a wildcard certificate of `*.aks-ingress.contoso.com` for the gateway.
 
    ```bash
    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=*.aks-ingress.${DOMAIN_NAME_AKS_BASELINE}/O=Contoso AKS Ingress"
@@ -49,7 +48,7 @@ Now that you have the [prerequisites](./01-prerequisites.md) met, follow these s
 
 1. Base64 encode the AKS gateway certificate.
 
-   :bulb: No matter if you used a certificate from your organization or you generated one from above, you'll need the public certificate (as `.crt` or `.cer`) to be Base64 encoded for proper storage in Key Vault later.
+   💡 No matter if you used a certificate from your organization or you generated one from above, you'll need the public certificate (as `.crt` or `.cer`) to be Base64 encoded for proper storage in Key Vault later.
 
    ```bash
    export AKS_INGRESS_CONTROLLER_CERTIFICATE_BASE64_AKS_BASELINE=$(cat aks-ingress-tls.crt | base64 | tr -d '\n')
