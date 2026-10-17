@@ -23,6 +23,13 @@ Now that you have the [prerequisites](./01-prerequisites.md) met, follow these s
    openssl pkcs12 -export -out appgw.pfx -in appgw.crt -inkey appgw.key -passout pass:
    ```
 
+   ### Kelly updates
+
+   ```bash
+   MSYS2_ARG_CONV_EXCL="/CN" openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out appgw.crt -keyout appgw.key -subj "/CN=bicycle.${DOMAIN_NAME_AKS_BASELINE}/O=Contoso Bicycle" -addext "subjectAltName = DNS:bicycle.${DOMAIN_NAME_AKS_BASELINE}" -addext "keyUsage=digitalSignature" -addext "extendedKeyUsage = serverAuth"
+   ```
+
+
 1. Base64 encode the client-facing certificate.
 
    :bulb: No matter if you used a certificate from your organization or one generated from above, you'll need the certificate (as `.pfx`) to be Base64 encoded for proper storage in Key Vault later.
