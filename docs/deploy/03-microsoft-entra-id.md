@@ -35,6 +35,8 @@ This does not configure anything related to workload identity. This configuratio
    az login -t <Replace-With-ClusterApi-EntraID-TenantId> --allow-no-subscriptions
    ```
 
+   ### kelly update - as i am already logged in to az - i skipped this part
+
 1. Query and save the Kubernetes cluster's tenant ID.
 
    ```bash
@@ -67,10 +69,10 @@ This does not configure anything related to workload identity. This configuratio
    You should skip this step, if the group identified in the former step already has a cluster admin assigned as member.
 
    ```bash
-   TENANTDOMAIN_K8SRBAC=$(az ad signed-in-user show --query 'userPrincipalName' -o tsv | cut -d '@' -f 2 | sed 's/\"//')
-   MEIDOBJECTNAME_USER_CLUSTERADMIN=bu0001a000800-admin
-   MEIDPASS_USER_CLUSTERADMIN='<Enter a password for the break-glass admin user that meets Microsoft Entra ID password policies>'
-   MEIDOBJECTID_USER_CLUSTERADMIN=$(az ad user create --display-name=${MEIDOBJECTNAME_USER_CLUSTERADMIN} --user-principal-name ${MEIDOBJECTNAME_USER_CLUSTERADMIN}@${TENANTDOMAIN_K8SRBAC} --force-change-password-next-sign-in --password "${MEIDPASS_USER_CLUSTERADMIN}" --query id -o tsv)
+   export TENANTDOMAIN_K8SRBAC=$(az ad signed-in-user show --query 'userPrincipalName' -o tsv | cut -d '@' -f 2 | sed 's/\"//')
+   export MEIDOBJECTNAME_USER_CLUSTERADMIN=bu0001a000800-admin
+   export MEIDPASS_USER_CLUSTERADMIN='C@m3l123'
+   export MEIDOBJECTID_USER_CLUSTERADMIN=$(az ad user create --display-name=${MEIDOBJECTNAME_USER_CLUSTERADMIN} --user-principal-name ${MEIDOBJECTNAME_USER_CLUSTERADMIN}@${TENANTDOMAIN_K8SRBAC} --force-change-password-next-sign-in --password "${MEIDPASS_USER_CLUSTERADMIN}" --query id -o tsv)
    echo TENANTDOMAIN_K8SRBAC: $TENANTDOMAIN_K8SRBAC
    echo MEIDOBJECTNAME_USER_CLUSTERADMIN: $MEIDOBJECTNAME_USER_CLUSTERADMIN
    echo MEIDOBJECTID_USER_CLUSTERADMIN: $MEIDOBJECTID_USER_CLUSTERADMIN
@@ -104,6 +106,8 @@ However, in some situations, you might need to use two different Microsoft Entra
 Both approaches use integrated authentication between Microsoft Entra ID and AKS. The Azure RBAC approach simply elevates this control to Azure RBAC instead of direct YAML-based management within the cluster, and so the Azure RBAC approach usually aligns better with many organizations' governance strategy.
 
 When you take this baseline architecture to production, be sure you're using Azure RBAC as your Kubernetes RBAC backing store if you can.
+
+<h1 style="color: red;">kelly - the steps below here will be taken care of later - we are using the azure RBAC as its preffered</h1>
 
 ### Azure RBAC *[Preferred]*
 
